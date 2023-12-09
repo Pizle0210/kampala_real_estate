@@ -1,5 +1,5 @@
 import User from "../models/userModel.js";
-const signUp = async (req, res) => {
+const signUp = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   const userExist = await User.findOne({ email: email });
@@ -7,7 +7,7 @@ const signUp = async (req, res) => {
     res.status(400).json({ message: `user already exist` });
     return;
   }
-  
+
   // Validate username, email, and password
   if (!username || !email || !password) {
     return res.status(400).send("Invalid input");
@@ -19,8 +19,9 @@ const signUp = async (req, res) => {
     // Send a response back to the client
     res.status(201).send("User created successfully");
   } catch (error) {
-    res.status(500).json({error: `error encountered,${error}`})
+    // res.status(500).json({error: `error encountered,${error}`})
+    // throw new Error('This user exist in database')
+    next(error)
   }
-  
 };
-export { signUp }; 
+export { signUp };
