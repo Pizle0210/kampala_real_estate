@@ -1,5 +1,5 @@
 
-export const ErrorPage = () => {
+export const ErrorScreen = () => {
   return (
     <div>ErrorPage</div>
   )

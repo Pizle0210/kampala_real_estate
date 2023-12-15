@@ -2,8 +2,8 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { HomeScreen } from "./Screens/HomeScreen";
 import { AboutScreen } from "./Screens/AboutScreen";
 import { SignInScreen } from "./Screens/SignInScreen";
-import { SignOutScreen } from "./Screens/SignOutScreen";
-import { ErrorPage } from "./Screens/ErrorPage";
+import { SignUpScreen } from "./Screens/SignUpScreen";
+import { ErrorScreen } from "./Screens/ErrorScreen";
 import { ProfileScreen } from "./Screens/ProfileScreen";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
@@ -17,9 +17,9 @@ function App() {
           <Route path="/" element={<HomeScreen />} />
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/login" element={<SignInScreen />} />
-          <Route path="/logout" element={<SignOutScreen />} />
+          <Route path="/signup" element={<SignUpScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
-          <Route path="*" element={<ErrorPage />} />
+          <Route path="*" element={<ErrorScreen />} />
         </Routes>
       </Router>
       <Footer />
