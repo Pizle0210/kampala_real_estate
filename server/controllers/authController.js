@@ -1,27 +1,60 @@
+import asyncHandler from "../middleware/asyncHandler.js";
+import { errorHandler } from "../middleware/errorHandler.js";
 import User from "../models/userModel.js";
-const signUp = async (req, res, next) => {
+import { generateToken } from "../utils/jwt.js";
+
+const register = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
 
-  const userExist = await User.findOne({ email: email });
-  if (userExist) {
-    res.status(400).json({ message: `user already exist` });
-    return;
+  if (!username || !email || !password) {
+    return next(errorHandler(400, "Invalid input"));
   }
 
-  // Validate username, email, and password
-  if (!username || !email || !password) {
-    return res.status(400).send("Invalid input");
-  }
   try {
-    const newUser = new User({ username, email, password });
-    // Save the user to the database
-    await newUser.save();
-    // Send a response back to the client
-    res.status(201).send("User created successfully");
+    const userExist = await User.findOne({ email });
+    if (userExist) {
+      return next(errorHandler(409, "User already exists"));
+    }
+    const user = await User.create({ username, email, password });
+
+    if (user) {
+      generateToken(res, user._id);
+      res.status(201).json({
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+      });
+    } else {
+      next(errorHandler(400, "Unable to create user"));
+    }
   } catch (error) {
-    // res.status(500).json({error: `error encountered,${error}`})
-    // throw new Error('This user exist in database')
-    next(error)
+    next(errorHandler(500, "error from function"));
   }
-};
-export { signUp };
+});
+
+const authenticateUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new Error("Invalid request body");
+  }
+  //? find user in db
+  const user = await User.findOne({ email });
+
+  if (user && (await user.matchPassword(password))) {
+    // generate token
+    generateToken(res, user._id);
+    // Return user data
+    res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    });
+
+    // ?Send response
+    res.status(200).json({ message: "User authenticated successfully" });
+  } else {
+    throw new Error("Invalid email or password");
+  }
+});
+
+export { register, authenticateUser };

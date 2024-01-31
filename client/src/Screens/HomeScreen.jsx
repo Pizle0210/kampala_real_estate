@@ -1,6 +1,6 @@
 
 export const HomeScreen = () => {
   return (
-    <div>Home Screen</div>
+    <div className="flex place-content-center">Home</div>
   )
 }

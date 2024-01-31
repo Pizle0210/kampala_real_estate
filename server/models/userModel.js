@@ -1,7 +1,6 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 
-
 const UserSchema = new Schema(
   {
     username: {
@@ -24,17 +23,16 @@ const UserSchema = new Schema(
 
 const SALT_ROUNDS = 12;
 
-UserSchema.methods.matchPassword = function (enteredPassword) {
-  return bcrypt.compareSync(enteredPassword, this.password);
+UserSchema.methods.matchPassword = async function (enteredPassword) {
+  return bcrypt.compare(enteredPassword, this.password);
 };
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    return next();
+    next();
   }
-  const salt = bcrypt.genSaltSync(SALT_ROUNDS);
-  this.password = bcrypt.hashSync(this.password, salt);
-  next();
+  const salt = await bcrypt.genSaltSync(SALT_ROUNDS);
+  this.password = await bcrypt.hashSync(this.password, salt);
 });
 
 const User = model("User", UserSchema);

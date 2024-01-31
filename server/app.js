@@ -1,29 +1,30 @@
 import express from "express";
 import morgan from "morgan";
 import mongoose from "mongoose";
-import userRoute from "./routes/userRoute.js";
-import authRoute from "./routes/authRoute.js";
+import userRouter from "./routes/userRoute.js";
+import authRouter from "./routes/authRoute.js";
 import dotenv from "dotenv";
+import asyncHandler from "./middleware/asyncHandler.js";
 dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
-app.use("/kampalarealtor/", userRoute);
-app.use("/kampalarealtor/auth", authRoute);
+app.use("/kampala", asyncHandler(userRouter));
+app.use("/kampala/auth", asyncHandler(authRouter));
 
-// app.use((err, req, res) => {
-//   const statusCode = err.statusCode || 500;
-//   err.status = err.status || "error";
-//   const message = err.message || "Internal server error";
-//   return res.status(statusCode).json({
-//     success: false,
-//     statusCode,
-//     message,
-//   });
-// });
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
+  return res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+  });
+});
 
 mongoose
   .connect(process.env.MONGO_URI)
