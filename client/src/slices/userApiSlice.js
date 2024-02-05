@@ -16,8 +16,20 @@ const usersSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
+      // providesTags:['']
+    }),
+    loginWithGoogle: builder.mutation({
+      query: (credentials) => ({
+        url: `${AUTH_URL}/google`,
+        method: "POST",
+        body: credentials,
+      }),
     }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation } = usersSlice;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useLoginWithGoogleMutation,
+} = usersSlice;

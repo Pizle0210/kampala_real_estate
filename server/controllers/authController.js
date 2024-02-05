@@ -2,6 +2,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import { errorHandler } from "../middleware/errorHandler.js";
 import User from "../models/userModel.js";
 import { generateToken } from "../utils/jwt.js";
+import bcrypt from "bcryptjs";
 
 const register = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -57,4 +58,46 @@ const authenticateUser = asyncHandler(async (req, res) => {
   }
 });
 
-export { register, authenticateUser };
+const google = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email.toLowerCase() });
+    if (user) {
+      // generate token
+      generateToken(res, user._id);
+      const { password: pass, ...rest } = user._doc;
+      // Return user data
+      res.status(200).json({
+        ...rest,
+      });
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashGooglePassword = await bcrypt.hash(generatedPassword, 15); // Increased salt round to 15
+      const newUser = new User({
+        username:
+          req.body.name.split(" ").join("").toLowerCase() +
+          Math.random().toString(36).slice(-3),
+        email: req.body.email.toLowerCase(),
+        password: hashGooglePassword,
+        avatar: req.body.photo,
+      });
+      await newUser.save();
+      const { password: pass, ...rest } = newUser._doc;
+      generateToken(res, newUser._id);
+      res.status(200).json({
+        ...rest,
+      });
+    }
+  } catch (error) {
+    next(
+      errorHandler(
+        500,
+        "An error occurred while processing the request.",
+        error
+      )
+    );
+  }
+});
+
+export { register, authenticateUser, google };

@@ -17,6 +17,10 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+      default: `https://cdn.pixabay.com/photo/2023/12/14/16/39/robot-8449206_640.jpg`,
+    },
   },
   { timestamps: true }
 );

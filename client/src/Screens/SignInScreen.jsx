@@ -1,26 +1,30 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../slices/userApiSlice";
 import { notifyError, notifySuccess } from "../App";
-// import { setCredentials } from "../slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setCredentials } from "../slices/authSlice";
+import Oauth from "../components/Oauth";
 
 export const SignInScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
-  const [login, { isLoading, error }] = useLoginMutation();
-  // const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const [login, { isLoading }] = useLoginMutation();
+
 
   const reset = () => {
     setEmail("");
     setPassword("");
   };
 
-  const submitHandler = async (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
     const fields = [email, password];
     if (fields.some((field) => field === "")) {
-      // Use global notification system or context to display error message
       return notifyError("Fields cannot be empty");
     }
     login({ email, password })
@@ -29,9 +33,10 @@ export const SignInScreen = () => {
         if (res?.error) {
           notifyError("Login failed. incorrect email or password");
         }
+        dispatch(setCredentials({ ...res }));
+        navigate("/");
         notifySuccess("Logged in successfully");
         reset(); // Reset form fields
-        navigate("/");
       });
   };
 
@@ -58,10 +63,11 @@ export const SignInScreen = () => {
         />
         <button
           disabled={isLoading}
-          className=" px-2 p-2 bg-blue-500 hover:bg-blue-500/80 text-white font-bold uppercase disabled:bg-gray-500 rounded-md"
+          className=" px-2 p-2 bg-[#294282] hover:bg-[#375297] text-white disabled:bg-gray-500 rounded-md font-bold uppercase"
         >
           {isLoading ? "Loading..." : "Sign In"}
         </button>
+        <Oauth/>
       </form>
       <div className="text-sm flex space-x-2">
         <p className="">Don't have an account?</p>{" "}

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../slices/userApiSlice";
 import { notifyInfo, notifySuccess } from "../App";
-// import { setCredentials } from "../slices/authSlice";
+import { setCredentials } from "../slices/authSlice";
+import { useDispatch } from "react-redux";
+import Oauth from "../components/Oauth";
 
 export const SignUpScreen = () => {
   const [username, setUsername] = useState("");
@@ -10,10 +12,13 @@ export const SignUpScreen = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [register, { isLoading }] = useRegisterMutation();
-  // const { userInfo } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
 
   const reset = () => {
-    setUsername(""), setEmail(""), setPassword("");
+    setUsername("");
+    setEmail("");
+    setPassword("");
   };
 
   const submitHandler = async (e) => {
@@ -24,6 +29,7 @@ export const SignUpScreen = () => {
     }
     try {
       const data = await register({ username, email, password });
+      dispatch(setCredentials({...data}));
       notifySuccess("You have successfully created an account");
       console.log(data);
       reset(); // Reset form fields
@@ -45,34 +51,35 @@ export const SignUpScreen = () => {
           type="text"
           value={username}
           placeholder="username"
-          className="border-1 focus:border-none focus:outline-none  focus:ring-2 focus:ring-fuchsia-500 rounded-lg transition-all duration-100 ease-out transform"
+          className="border-1 focus:border-none focus:outline-none  focus:ring-2 focus:ring-blue-500 rounded-lg transition-all duration-100 ease-out transform"
         />
         <input
           onChange={(e) => setEmail(e.target.value)}
           type="email"
           value={email}
           placeholder="email"
-          className="border-1 focus:border-none focus:outline-none  focus:ring-2 focus:ring-fuchsia-500 rounded-lg transition-all duration-100 ease-out transform"
+          className="border-1 focus:border-none focus:outline-none  focus:ring-2 focus:ring-blue-500 rounded-lg transition-all duration-100 ease-out transform"
         />
         <input
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           value={password}
           placeholder="password"
-          className="border-1 focus:border-none focus:outline-none  focus:ring-2 focus:ring-fuchsia-500 rounded-lg transition-all duration-100 ease-out transform"
+          className="border-1 focus:border-none focus:outline-none  focus:ring-2 focus:ring-blue-500 rounded-lg transition-all duration-100 ease-out transform"
         />
         <button
           disabled={isLoading}
-          className=" px-2 p-2 bg-fuchsia-500 hover:bg-fuchsia-500/80 text-white font-bold uppercase disabled:bg-gray-500 rounded-md"
+          className=" px-2 p-2 bg-[#294282] hover:bg-[#375297] text-white font-bold uppercase disabled:bg-gray-500 rounded-md"
         >
           {isLoading ? "Loading..." : "Sign Up"}
         </button>
+        <Oauth/>
       </form>
       <div className="text-sm flex space-x-2">
         <p className="">Have an account?</p>{" "}
         <Link to={"/login"}>
           {" "}
-          <span className="text-gray-500 hover:underline">Sign in</span>
+          <span className="text-blue-700 hover:underline">Sign in</span>
         </Link>
       </div>
     </div>
