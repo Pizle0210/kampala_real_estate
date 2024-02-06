@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import PrivateRoute from "./components/PrivateRoute";
 
 export const notifySuccess = (message) => {
   toast.success(message, {
@@ -60,10 +61,16 @@ function App() {
             <Header />
             <Routes>
               <Route path="/" element={<HomeScreen />} />
-              <Route path="/about" element={<AboutScreen />} />
+                <Route path="/about" element={<AboutScreen />} />
               <Route path="/login" element={<SignInScreen />} />
               <Route path="/signup" element={<SignUpScreen />} />
-              <Route path="/profile" element={<ProfileScreen />} />
+
+
+
+              {/* private route */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/profile" element={<ProfileScreen />} />
+              </Route>
               <Route path="*" element={<ErrorScreen />} />
             </Routes>
           </Router>

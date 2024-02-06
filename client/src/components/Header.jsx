@@ -35,7 +35,7 @@ export const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-[#0f0e0e] to-[#294282] w-screen">
+    <header className="header">
       <nav className=" px-7 py-5 flex items-center justify-between">
         <Link to={"/"} className="flex space-x-3 items-center ">
           <img src={logo} alt="logo" className="h-14 w-14 " />
@@ -66,9 +66,9 @@ export const Header = () => {
             <button
               to={"/"}
               onClick={handleLogout}
-              className="px-2 bg-[#552121] text-white font-bold hover:scale-95 ease-in-out duration-200 transition-transform transform rounded p-1 shadow-xl"
+              className="px-4 p-2 bg-[#02202c] text-white font-bold hover:scale-95 ease-in-out duration-200 transition-transform transform rounded shadow-xl"
             >
-              {user && userInfo ? "Sign Out" : "Sign In"}
+              {user || userInfo ? "Sign Out" : "Sign In"}
             </button>
           </div>
         ) : (
